@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: curl, mbstring
+          coverage: none
+
+      - run: composer install --no-interaction --prefer-dist
+
+      - name: AWS SigV4 公式テストスイートで署名処理を検証
+        run: php bin/verify-sigv4.php
+
+      - name: ユニットテスト
+        run: vendor/bin/phpunit
+
+      - name: デモモードで一連の処理を実行（取得 → 計算 → 抽出 → 重複判定 → 通知プレビュー）
+        run: |
+          php bin/run.php --force
+          php bin/run.php --force

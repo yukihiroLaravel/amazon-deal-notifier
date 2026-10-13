@@ -47,6 +47,7 @@ final class JobRunner
     public function run(JobOptions $options = new JobOptions()): JobResult
     {
         $now = $options->now ?? new DateTimeImmutable();
+        $timer = microtime(true);
         $runId = $now->format('Ymd-His') . '-' . bin2hex(random_bytes(2));
         $errors = [];
         $fetched = $matched = $notified = $duplicates = 0;
@@ -62,7 +63,7 @@ final class JobRunner
             if (!$options->force && !$options->dryRun && ($skip = $this->skipReason($settings, $now)) !== null) {
                 $this->logger->info($skip);
 
-                return new JobResult(new RunLog($runId, $now, new DateTimeImmutable(), RunLog::SKIPPED, $this->source->label(), 0, 0, 0, 0, $skip), [], true);
+                return new JobResult(new RunLog($runId, $now, self::finishedAt($now, $timer), RunLog::SKIPPED, $this->source->label(), 0, 0, 0, 0, $skip), [], true);
             }
 
             $rules = $this->activeRules($options, $errors);
@@ -115,7 +116,7 @@ final class JobRunner
             default => RunLog::FAILED,
         };
         $summary = sprintf('ルール %d件 / 取得 %d件 / 該当 %d件 / 通知 %d件 / 重複スキップ %d件', count($rules), $fetched, $matched, $notified, $duplicates);
-        $log = new RunLog($runId, $now, new DateTimeImmutable(), $status, $this->source->label(), $fetched, $matched, $notified, $duplicates, $errors === [] ? $summary : implode(' / ', $errors));
+        $log = new RunLog($runId, $now, self::finishedAt($now, $timer), $status, $this->source->label(), $fetched, $matched, $notified, $duplicates, $errors === [] ? $summary : implode(' / ', $errors));
 
         $this->finish($log, $errors, $options->dryRun);
 
@@ -258,6 +259,14 @@ final class JobRunner
         $limit = $now->getTimestamp() - $settings->historyRetentionDays * 86400;
 
         return array_values(array_filter($history, static fn (NotificationRecord $r): bool => $r->notifiedAt->getTimestamp() >= $limit));
+    }
+
+    /** 終了時刻は「開始時刻 + 経過時間」で求める（開始時刻を指定して実行した場合も所要時間が正しくなる） */
+    private static function finishedAt(DateTimeImmutable $startedAt, float $timer): DateTimeImmutable
+    {
+        $seconds = (float) $startedAt->format('U.u') + (microtime(true) - $timer);
+
+        return DateTimeImmutable::createFromFormat('U.u', sprintf('%.6F', $seconds))->setTimezone($startedAt->getTimezone());
     }
 
     private function saveLastExchange(): void

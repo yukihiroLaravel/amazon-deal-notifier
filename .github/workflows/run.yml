@@ -1,0 +1,60 @@
+# 定期実行：毎時0分に起動し、スプレッドシートの「実行間隔（時間）」を満たしていれば処理する
+name: Deal Radar（定期実行）
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '実行間隔を無視して今すぐ実行する'
+        type: boolean
+        default: true
+
+# 前の実行が終わる前に次が始まらないようにする（重複通知の防止）
+concurrency:
+  group: deal-radar
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATA_SOURCE: ${{ vars.DATA_SOURCE || 'mock' }}
+      STORAGE: sheets
+      SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      SLACK_ERROR_WEBHOOK_URL: ${{ secrets.SLACK_ERROR_WEBHOOK_URL }}
+      PAAPI_ACCESS_KEY: ${{ secrets.PAAPI_ACCESS_KEY }}
+      PAAPI_SECRET_KEY: ${{ secrets.PAAPI_SECRET_KEY }}
+      PAAPI_PARTNER_TAG: ${{ secrets.PAAPI_PARTNER_TAG }}
+      APP_TIMEZONE: Asia/Tokyo
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: curl, mbstring
+          coverage: none
+
+      - name: Composer キャッシュ
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: 実行
+        run: php bin/run.php ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '--force' || '' }}
+
+      - name: ログを保存
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ github.run_id }}
+          path: storage/logs/
+          retention-days: 14
