@@ -30,9 +30,6 @@ use Throwable;
  */
 final class JobRunner
 {
-    /** cron の起動時刻のずれを吸収するための余裕（秒） */
-    private const INTERVAL_TOLERANCE = 300;
-
     public function __construct(
         private readonly Storage $storage,
         private readonly PaapiProductSource $source,
@@ -214,8 +211,9 @@ final class JobRunner
             if (!$log->countsAsRun()) {
                 continue;
             }
-            $elapsed = $now->getTimestamp() - $log->startedAt->getTimestamp();
-            if ($elapsed < $settings->intervalHours * 3600 - self::INTERVAL_TOLERANCE) {
+            // 経過時間ではなく「何時台か」で比べる。GitHub Actions の定期実行は起動が
+            // 数分〜数十分遅れることがあり、経過時間で比べると1時間おきに飛ばされるため
+            if (self::hourSlot($now) - self::hourSlot($log->startedAt) < $settings->intervalHours) {
                 return sprintf('前回の実行（%s）から%d時間が経過していないためスキップします（--force で強制実行）', $log->startedAt->format('Y/m/d H:i'), $settings->intervalHours);
             }
 
@@ -223,6 +221,12 @@ final class JobRunner
         }
 
         return null;
+    }
+
+    /** 1970年1月1日からの「時間」の通し番号（タイムゾーンに関係なく1時間ごとに1増える） */
+    public static function hourSlot(DateTimeImmutable $at): int
+    {
+        return intdiv($at->getTimestamp(), 3600);
     }
 
     /**

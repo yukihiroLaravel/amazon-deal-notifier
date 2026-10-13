@@ -123,11 +123,13 @@ final class JobRunnerTest extends TestCase
     {
         $this->runner()->run(new JobOptions(force: true, now: new DateTimeImmutable('2026-10-13 10:00:00')));
 
-        $skipped = $this->runner()->run(new JobOptions(now: new DateTimeImmutable('2026-10-13 10:30:00')));
-        $due = $this->runner()->run(new JobOptions(now: new DateTimeImmutable('2026-10-13 10:57:00')));
+        $skipped = $this->runner()->run(new JobOptions(now: new DateTimeImmutable('2026-10-13 10:50:00')));
+        $due = $this->runner()->run(new JobOptions(now: new DateTimeImmutable('2026-10-13 11:20:00')));
+        $delayed = $this->runner()->run(new JobOptions(now: new DateTimeImmutable('2026-10-13 12:02:00')));
 
-        self::assertTrue($skipped->skipped, '実行間隔1時間に対して30分後はスキップ');
-        self::assertFalse($due->skipped, 'cron のずれ（5分以内）は許容して実行');
+        self::assertTrue($skipped->skipped, '同じ時間帯（10時台）の2回目はスキップ');
+        self::assertFalse($due->skipped, '次の時間帯（11時台）なら、起動が20分遅れても実行');
+        self::assertFalse($delayed->skipped, '前回が遅れて11:20でも、12時台の起動は42分後でも実行');
     }
 
     public function testOneFailingCategoryIsReportedAsPartialAndOthersContinue(): void

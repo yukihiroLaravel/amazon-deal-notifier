@@ -7,6 +7,7 @@ namespace DealRadar\Dashboard;
 use DealRadar\Support\Files;
 use DateTimeImmutable;
 use DealRadar\Domain\NotificationRecord;
+use DealRadar\Job\JobRunner;
 use DealRadar\Domain\ResultRow;
 use DealRadar\Domain\Rule;
 use DealRadar\Domain\RunLog;
@@ -105,11 +106,10 @@ final class DashboardData
     {
         foreach ($this->runLogs() as $log) {
             if ($log->countsAsRun()) {
-                // 定期実行は毎時0分に起動し、実行間隔を満たしていれば処理する
-                $due = $log->startedAt->modify('+' . $this->settings()->intervalHours . ' hours')->modify('-5 minutes');
-                $next = $due->setTime((int) $due->format('H'), 0);
+                // 定期実行は毎時0分に起動し、前回の実行から実行間隔ぶん後の時間帯で処理する
+                $slot = JobRunner::hourSlot($log->startedAt) + $this->settings()->intervalHours;
 
-                return $next < $due ? $next->modify('+1 hour') : $next;
+                return (new DateTimeImmutable('@' . ($slot * 3600)))->setTimezone($log->startedAt->getTimezone());
             }
         }
 
