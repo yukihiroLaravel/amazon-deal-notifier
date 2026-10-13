@@ -57,6 +57,8 @@ $lastRun = $data->lastRun();
       </a>
     <?php endif; ?>
 
+    <?php require __DIR__ . '/_run-button.php'; ?>
+
     <div class="sidebar-foot">
       <div class="env-row"><span>データ取得</span><span><span class="dot <?= $data->isDemo() ? 'demo' : 'on' ?>"></span><?= $data->isDemo() ? 'PA-API（デモ）' : 'PA-API 5.0' ?></span></div>
       <div class="env-row"><span>保存先</span><span><?= $sheetUrl ? 'スプレッドシート' : 'ローカル JSON' ?></span></div>
@@ -83,8 +85,25 @@ $lastRun = $data->lastRun();
       </div>
     <?php endif; ?>
 
+    <?php if (!empty($flash)): ?>
+      <div class="flash <?= V::e($flash['tone']) ?>" role="status">
+        <?= V::icon($flash['tone'] === 'success' ? 'check' : 'alert', 18) ?>
+        <div><strong><?= V::e($flash['title']) ?></strong><small><?= V::e($flash['text']) ?></small></div>
+      </div>
+    <?php endif; ?>
+
     <?= $content ?>
   </main>
 </div>
+<script>
+  // 送信中はボタンを押せないようにする（二重送信の防止）
+  document.querySelectorAll('[data-run-form]').forEach(function (form) {
+    form.addEventListener('submit', function () {
+      var button = form.querySelector('button');
+      button.disabled = true;
+      form.querySelector('[data-run-label]').textContent = '取得中…';
+    });
+  });
+</script>
 </body>
 </html>

@@ -132,6 +132,33 @@ final class JobRunnerTest extends TestCase
         self::assertFalse($delayed->skipped, '前回が遅れて11:20でも、12時台の起動は42分後でも実行');
     }
 
+    public function testManualFetchIgnoresIntervalButRespectsCooldown(): void
+    {
+        $this->runner()->run(new JobOptions(force: true, now: new DateTimeImmutable('2026-10-13 10:00:00')));
+
+        $tooSoon = $this->runner()->run(new JobOptions(manual: true, now: new DateTimeImmutable('2026-10-13 10:03:00')));
+        $allowed = $this->runner()->run(new JobOptions(manual: true, now: new DateTimeImmutable('2026-10-13 10:06:00')));
+
+        self::assertTrue($tooSoon->skipped, '既定の5分以内の手動取得は実行しない（連打防止）');
+        self::assertStringContainsString('10:05から実行できます', $tooSoon->log->message);
+        self::assertFalse($allowed->skipped, '5分経てば、実行間隔（1時間）に関係なく手動取得できる');
+        self::assertStringStartsWith('[手動]', $allowed->log->message);
+    }
+
+    public function testConcurrentRunIsRejectedWhileAnotherIsRunning(): void
+    {
+        $lock = fopen($this->dir . '/data/run.lock', 'c');
+        flock($lock, LOCK_EX);
+
+        $result = $this->runner()->run(new JobOptions(force: true));
+
+        flock($lock, LOCK_UN);
+        fclose($lock);
+        self::assertTrue($result->skipped);
+        self::assertStringContainsString('実行中', $result->log->message);
+        self::assertSame([], $this->slack->requests, '通知は送られない');
+    }
+
     public function testOneFailingCategoryIsReportedAsPartialAndOthersContinue(): void
     {
         $result = $this->runner('Computers')->run(new JobOptions(force: true));

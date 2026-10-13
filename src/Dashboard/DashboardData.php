@@ -116,6 +116,20 @@ final class DashboardData
         return null;
     }
 
+    /** 手動取得が使えるようになる時刻（null なら今すぐ使える） */
+    public function manualAvailableAt(): ?DateTimeImmutable
+    {
+        foreach ($this->runLogs() as $log) {
+            if ($log->countsAsRun()) {
+                $at = $log->startedAt->modify('+' . $this->settings()->manualCooldownMinutes . ' minutes');
+
+                return $at > new DateTimeImmutable() ? $at : null;
+            }
+        }
+
+        return null;
+    }
+
     /** @return list<SigV4VectorResult> */
     public function sigV4Results(): array
     {

@@ -296,6 +296,26 @@ td.center, th.center { text-align: center; }
 .btn.sheets:hover { background: #137333; border-color: #137333; }
 .btn.sheets .icon:last-child { opacity: .75; }
 
+/* 今すぐ取得 */
+.run-form { display: grid; gap: 6px; margin-top: 10px; }
+.btn.run {
+  justify-content: center; width: 100%; padding: 9px 12px;
+  background: #1e293b; border-color: #334155; color: #fff; box-shadow: none;
+}
+.btn.run:hover:not(:disabled) { background: #273449; }
+.btn.run:disabled { opacity: .55; cursor: not-allowed; }
+.run-hint { font-size: 11px; color: var(--sidebar-muted); text-align: center; }
+
+.flash { display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; margin-bottom: 18px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); }
+.flash strong { display: block; }
+.flash small { display: block; color: var(--text-2); font-size: 12.5px; }
+.flash.success { border-color: var(--success-text); background: var(--success-soft); }
+.flash.success .icon { color: var(--success-text); }
+.flash.warning { border-color: var(--warning-text); background: var(--warning-soft); }
+.flash.warning .icon { color: var(--warning-text); }
+.flash.danger { border-color: var(--danger-text); background: var(--danger-soft); }
+.flash.danger .icon { color: var(--danger-text); }
+
 /* サイドバーのスプレッドシートへのリンク */
 .sheet-link {
   display: flex; align-items: center; gap: 8px;
@@ -403,7 +423,10 @@ pre.code .hl { color: #fdba74; }
   .nav a { white-space: nowrap; }
   .nav-label, .sidebar-foot, .nav a .count { display: none; }
   .sheet-link { margin: 10px 0 0; padding: 8px 12px; }
-  .head-meta .btn.sheets { display: none; } /* 上部の緑のボタンと重複するため */
+  .head-meta .btn.sheets { display: none; }
+  .run-form { grid-template-columns: auto 1fr; align-items: center; }
+  .btn.run { width: auto; }
+  .run-hint { text-align: left; } /* 上部の緑のボタンと重複するため */
   .sheet-link-icon { width: 28px; height: 28px; }
   .main { padding: 20px 16px 48px; }
   .pipeline { grid-template-columns: minmax(0, 1fr); }

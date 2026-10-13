@@ -4,14 +4,11 @@ name: Deal Radar（定期実行）
 on:
   schedule:
     - cron: '0 * * * *'
+  # 「Run workflow」ボタン＝今すぐ取得（手動取得の最短間隔を守るので、連打しても実行は抑えられる）
   workflow_dispatch:
-    inputs:
-      force:
-        description: '実行間隔を無視して今すぐ実行する'
-        type: boolean
-        default: true
 
 # 前の実行が終わる前に次が始まらないようにする（重複通知の防止）
+# 待機できるのは1件だけで、それ以上の起動は自動で取り消される（連打しても溜まらない）
 concurrency:
   group: deal-radar
   cancel-in-progress: false
@@ -49,7 +46,7 @@ jobs:
       - run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
       - name: 実行
-        run: php bin/run.php ${{ (github.event_name == 'workflow_dispatch' && inputs.force) && '--force' || '' }}
+        run: php bin/run.php ${{ github.event_name == 'workflow_dispatch' && '--manual' || '' }}
 
       - name: ログを保存
         if: always()

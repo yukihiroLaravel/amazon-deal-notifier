@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use DealRadar\Dashboard\DashboardData;
+use DealRadar\Domain\RunLog;
+use DealRadar\Job\JobOptions;
 use DealRadar\Support\App;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
@@ -38,6 +40,28 @@ if (!isset($pages[$page])) {
     http_response_code(404);
     $page = 'overview';
 }
+
+session_start();
+$_SESSION['csrf'] ??= bin2hex(random_bytes(16));
+
+// 「今すぐ取得」ボタン。最短間隔（基本設定）と実行中ロックで、連打しても実行は1回に抑えられる
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'run') {
+    if (!hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? ''))) {
+        http_response_code(403);
+        exit('画面を再読み込みしてから、もう一度お試しください');
+    }
+    $result = $app->jobRunner(false)->run(new JobOptions(manual: true));
+    $log = $result->log;
+    $_SESSION['flash'] = match (true) {
+        $result->skipped => ['tone' => 'warning', 'title' => '取得しませんでした', 'text' => $log->message],
+        $log->status === RunLog::SUCCESS => ['tone' => 'success', 'title' => "取得しました（通知 {$log->notified}件）", 'text' => $log->message],
+        default => ['tone' => 'danger', 'title' => "取得しました（{$log->status}）", 'text' => $log->message],
+    };
+    header('Location: ?page=' . urlencode($page), true, 303);
+    exit;
+}
+$flash = $_SESSION['flash'] ?? null;
+unset($_SESSION['flash']);
 
 $data = new DashboardData($app);
 

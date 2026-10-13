@@ -61,13 +61,17 @@ final class SheetSetup
             $service->spreadsheets_values->update($id, "'" . SheetSchema::RULES . "'!A2", new ValueRange(['values' => $rows]), ['valueInputOption' => 'USER_ENTERED']);
             $log[] = '抽出ルールの初期値を書き込み';
         }
-        if ($this->isEmpty(SheetSchema::SETTINGS)) {
-            $rows = [];
-            foreach (Settings::DEFINITIONS as $key => [$label, $default, $description]) {
+        // 基本設定は、まだ無い項目だけを末尾に追記する（入力済みの値は変えない）
+        $existing = array_map(static fn (array $r): string => (string) ($r[0] ?? ''), $service->spreadsheets_values->get($id, "'" . SheetSchema::SETTINGS . "'!A2:A")->getValues() ?? []);
+        $rows = [];
+        foreach (Settings::DEFINITIONS as $key => [$label, $default, $description]) {
+            if (!in_array($key, $existing, true)) {
                 $rows[] = [$key, $label, $default, $description];
             }
-            $service->spreadsheets_values->update($id, "'" . SheetSchema::SETTINGS . "'!A2", new ValueRange(['values' => $rows]), ['valueInputOption' => 'USER_ENTERED']);
-            $log[] = '基本設定の初期値を書き込み';
+        }
+        if ($rows !== []) {
+            $service->spreadsheets_values->append($id, "'" . SheetSchema::SETTINGS . "'!A2", new ValueRange(['values' => $rows]), ['valueInputOption' => 'USER_ENTERED', 'insertDataOption' => 'INSERT_ROWS']);
+            $log[] = '基本設定に項目を追加: ' . implode('、', array_map(static fn (array $r): string => $r[1], $rows));
         }
 
         // 3. 書式

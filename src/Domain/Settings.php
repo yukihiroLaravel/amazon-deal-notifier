@@ -14,6 +14,7 @@ final class Settings
         'renotifyDeltaPt' => ['値下げ再通知のしきい値（pt）', 10, '前回通知時より割引率がこのポイント以上深くなったら、日数内でも再通知します'],
         'pagesPerRule' => ['1ルールあたりの取得ページ数', 2, 'PA-API の SearchItems は1ページ10件。最大10ページまで'],
         'historyRetentionDays' => ['通知履歴の保持日数', 90, 'これより古い通知履歴は自動で削除します'],
+        'manualCooldownMinutes' => ['手動取得の最短間隔（分）', 5, '「今すぐ取得」は、前回の取得からこの時間が経つまで使えません（連打の防止）'],
     ];
 
     public function __construct(
@@ -22,6 +23,7 @@ final class Settings
         public readonly float $renotifyDeltaPt,
         public readonly int $pagesPerRule,
         public readonly int $historyRetentionDays,
+        public readonly int $manualCooldownMinutes = 5,
     ) {
     }
 
@@ -41,6 +43,7 @@ final class Settings
             renotifyDeltaPt: max(0.0, (float) $get('renotifyDeltaPt')),
             pagesPerRule: max(1, min(10, (int) $get('pagesPerRule'))),
             historyRetentionDays: max(1, (int) $get('historyRetentionDays')),
+            manualCooldownMinutes: max(1, (int) $get('manualCooldownMinutes')),
         );
     }
 
@@ -53,6 +56,7 @@ final class Settings
             'renotifyDeltaPt' => $this->renotifyDeltaPt,
             'pagesPerRule' => $this->pagesPerRule,
             'historyRetentionDays' => $this->historyRetentionDays,
+            'manualCooldownMinutes' => $this->manualCooldownMinutes,
         ];
     }
 }

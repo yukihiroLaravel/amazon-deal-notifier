@@ -44,6 +44,26 @@ final class JobRunner
 
     public function run(JobOptions $options = new JobOptions()): JobResult
     {
+        // 同時に2つ実行されないようにする（手動取得の連打や、定期実行との重なり）
+        $lock = fopen($this->stateDir . '/run.lock', 'c');
+        if ($lock === false || !flock($lock, LOCK_EX | LOCK_NB)) {
+            $now = $options->now ?? new DateTimeImmutable();
+            $message = '別の取得を実行中のため、今回は実行しませんでした';
+            $this->logger->info($message);
+
+            return new JobResult(new RunLog('busy', $now, $now, RunLog::SKIPPED, $this->source->label(), 0, 0, 0, 0, $message), [], true);
+        }
+
+        try {
+            return $this->execute($options);
+        } finally {
+            flock($lock, LOCK_UN);
+            fclose($lock);
+        }
+    }
+
+    private function execute(JobOptions $options): JobResult
+    {
         $now = $options->now ?? new DateTimeImmutable();
         $timer = microtime(true);
         $runId = $now->format('Ymd-His') . '-' . bin2hex(random_bytes(2));
@@ -58,7 +78,12 @@ final class JobRunner
         try {
             $settings = $this->storage->loadSettings();
 
-            if (!$options->force && !$options->dryRun && ($skip = $this->skipReason($settings, $now)) !== null) {
+            $skip = match (true) {
+                $options->force || $options->dryRun => null,
+                $options->manual => $this->manualCooldownReason($settings, $now),
+                default => $this->skipReason($settings, $now),
+            };
+            if ($skip !== null) {
                 $this->logger->info($skip);
 
                 return new JobResult(new RunLog($runId, $now, self::finishedAt($now, $timer), RunLog::SKIPPED, $this->source->label(), 0, 0, 0, 0, $skip), [], true);
@@ -113,7 +138,7 @@ final class JobRunner
             $succeededRules > 0 => RunLog::PARTIAL,
             default => RunLog::FAILED,
         };
-        $summary = sprintf('ルール %d件 / 取得 %d件 / 該当 %d件 / 通知 %d件 / 重複スキップ %d件', count($rules), $fetched, $matched, $notified, $duplicates);
+        $summary = ($options->manual ? '[手動] ' : '') . sprintf('ルール %d件 / 取得 %d件 / 該当 %d件 / 通知 %d件 / 重複スキップ %d件', count($rules), $fetched, $matched, $notified, $duplicates);
         $log = new RunLog($runId, $now, self::finishedAt($now, $timer), $status, $this->source->label(), $fetched, $matched, $notified, $duplicates, $errors === [] ? $summary : implode(' / ', $errors));
 
         $this->finish($log, $errors, $options->dryRun);
@@ -207,17 +232,37 @@ final class JobRunner
 
     private function skipReason(Settings $settings, DateTimeImmutable $now): ?string
     {
-        foreach ($this->storage->loadRunLogs(20) as $log) {
-            if (!$log->countsAsRun()) {
-                continue;
-            }
-            // 経過時間ではなく「何時台か」で比べる。GitHub Actions の定期実行は起動が
-            // 数分〜数十分遅れることがあり、経過時間で比べると1時間おきに飛ばされるため
-            if (self::hourSlot($now) - self::hourSlot($log->startedAt) < $settings->intervalHours) {
-                return sprintf('前回の実行（%s）から%d時間が経過していないためスキップします（--force で強制実行）', $log->startedAt->format('Y/m/d H:i'), $settings->intervalHours);
-            }
-
+        $last = $this->lastRun();
+        // 経過時間ではなく「何時台か」で比べる。GitHub Actions の定期実行は起動が
+        // 数分〜数十分遅れることがあり、経過時間で比べると1時間おきに飛ばされるため
+        if ($last === null || self::hourSlot($now) - self::hourSlot($last->startedAt) >= $settings->intervalHours) {
             return null;
+        }
+
+        return sprintf('前回の実行（%s）から%d時間が経過していないためスキップします（--force で強制実行）', $last->startedAt->format('Y/m/d H:i'), $settings->intervalHours);
+    }
+
+    private function manualCooldownReason(Settings $settings, DateTimeImmutable $now): ?string
+    {
+        $last = $this->lastRun();
+        if ($last === null) {
+            return null;
+        }
+        $availableAt = $last->startedAt->modify("+{$settings->manualCooldownMinutes} minutes");
+        if ($now >= $availableAt) {
+            return null;
+        }
+
+        return sprintf('前回の取得（%s）から%d分以内のため、手動取得はできません。%sから実行できます', $last->startedAt->format('H:i'), $settings->manualCooldownMinutes, $availableAt->format('H:i'));
+    }
+
+    /** 実際に処理した直近の実行（スキップは含めない） */
+    public function lastRun(): ?RunLog
+    {
+        foreach ($this->storage->loadRunLogs(20) as $log) {
+            if ($log->countsAsRun()) {
+                return $log;
+            }
         }
 
         return null;
