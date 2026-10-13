@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DealRadar\Notify;
 
+use DealRadar\Support\Files;
 use DealRadar\Http\HttpRequest;
 use DealRadar\Http\Transport;
 use RuntimeException;
@@ -77,7 +78,7 @@ final class SlackNotifier
             mkdir($this->previewDir, 0775, true);
         }
         $file = $this->previewDir . "/{$type}-" . preg_replace('/[^A-Za-z0-9_-]/', '_', $key) . '.json';
-        file_put_contents($file, json_encode([
+        Files::writeAtomic($file, (string) json_encode([
             'savedAt' => date(DATE_ATOM),
             'sent' => $type === 'error' ? ($this->errorWebhookUrl ?: $this->webhookUrl) !== null : $this->isConfigured(),
             'payload' => $payload,

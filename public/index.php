@@ -9,6 +9,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 
 $app = App::boot();
 
+// 画面に PHP の警告を出さない（ログには残る）
+ini_set('display_errors', '0');
+
 // Basic 認証（DASHBOARD_USER と DASHBOARD_PASSWORD の両方を設定したときだけ有効）
 $user = App::env('DASHBOARD_USER');
 $password = App::env('DASHBOARD_PASSWORD');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DealRadar\Paapi;
 
+use DealRadar\Support\Files;
 use DateTimeImmutable;
 use DateTimeZone;
 use DealRadar\Http\HttpRequest;
@@ -35,7 +36,7 @@ final class MockPaapiServer implements Transport
         private readonly ?string $simulateError = null,
     ) {
         $path = $catalogPath ?? dirname(__DIR__, 2) . '/fixtures/paapi/catalog.json';
-        $this->catalog = json_decode((string) file_get_contents($path), true)['items'];
+        $this->catalog = Files::readJson($path)['items'];
     }
 
     public function send(HttpRequest $request): HttpResponse

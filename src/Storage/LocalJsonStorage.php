@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DealRadar\Storage;
 
+use DealRadar\Support\Files;
 use DealRadar\Domain\NotificationRecord;
 use DealRadar\Domain\ResultRow;
 use DealRadar\Domain\Rule;
@@ -91,21 +92,13 @@ final class LocalJsonStorage implements Storage
     /** @return array<mixed> */
     private function read(string $name, array $default): array
     {
-        $path = $this->path($name);
-        if (!is_file($path)) {
-            return $default;
-        }
-        $data = json_decode((string) file_get_contents($path), true);
-
-        return is_array($data) ? $data : $default;
+        return Files::readJson($this->path($name)) ?? $default;
     }
 
     /** @param array<mixed> $data */
     private function write(string $name, array $data): void
     {
         // 書き込み途中で落ちても壊れないよう、一時ファイルに書いてから置き換える
-        $tmp = $this->path($name) . '.tmp';
-        file_put_contents($tmp, json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
-        rename($tmp, $this->path($name));
+        Files::writeAtomic($this->path($name), (string) json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
 }

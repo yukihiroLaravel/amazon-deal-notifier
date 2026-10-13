@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DealRadar\Job;
 
+use DealRadar\Support\Files;
 use DateTimeImmutable;
 use DealRadar\Analysis\DealFilter;
 use DealRadar\Analysis\Deduplicator;
@@ -276,6 +277,6 @@ final class JobRunner
             return;
         }
         $exchange['demo'] = $this->source->isDemo();
-        file_put_contents($this->stateDir . '/paapi_last_exchange.json', json_encode($exchange, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        Files::writeAtomic($this->stateDir . '/paapi_last_exchange.json', (string) json_encode($exchange, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
     }
 }

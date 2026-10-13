@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DealRadar\Paapi;
 
+use DealRadar\Support\Files;
 use DateTimeImmutable;
 use DateTimeZone;
 use RecursiveDirectoryIterator;
@@ -63,7 +64,7 @@ final class SigV4TestSuite
 
     public function runVector(string $name, string $dir): SigV4VectorResult
     {
-        $raw = (string) file_get_contents("{$dir}/{$name}.req");
+        $raw = (string) Files::read("{$dir}/{$name}.req");
         [$method, $path, $query, $headers, $body] = self::parseRequest($raw);
 
         $signer = new SigV4Signer(
@@ -75,7 +76,7 @@ final class SigV4TestSuite
         );
         $signed = $signer->sign($method, $path, $query, $headers, $body, new DateTimeImmutable('2015-08-30T12:36:00', new DateTimeZone('UTC')));
 
-        $expect = static fn (string $ext): string => (string) file_get_contents("{$dir}/{$name}.{$ext}");
+        $expect = static fn (string $ext): string => (string) Files::read("{$dir}/{$name}.{$ext}");
 
         return new SigV4VectorResult(
             name: $name,

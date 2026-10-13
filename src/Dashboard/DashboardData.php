@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DealRadar\Dashboard;
 
+use DealRadar\Support\Files;
 use DateTimeImmutable;
 use DealRadar\Domain\NotificationRecord;
 use DealRadar\Domain\ResultRow;
@@ -134,7 +135,7 @@ final class DashboardData
     {
         $file = $this->app->root . '/storage/data/paapi_last_exchange.json';
 
-        return is_file($file) ? json_decode((string) file_get_contents($file), true) : null;
+        return Files::readJson($file);
     }
 
     /** @return array<string, array{savedAt: string, sent: bool, payload: array<string, mixed>}> ファイル名 => プレビュー */
@@ -142,7 +143,7 @@ final class DashboardData
     {
         $previews = [];
         foreach (glob($this->app->root . '/storage/slack/*.json') ?: [] as $file) {
-            $data = json_decode((string) file_get_contents($file), true);
+            $data = Files::readJson($file);
             if (is_array($data)) {
                 $previews[basename($file, '.json')] = $data;
             }
