@@ -29,6 +29,7 @@ $sentTotal = array_sum(array_map(static fn ($h) => $h->count, $history));
   <div class="head-meta">
     <span class="chip"><?= V::icon('clock', 14) ?>実行間隔 <?= $settings->intervalHours ?>時間</span>
     <span class="chip"><?= V::icon('filter', 14) ?>有効なルール <?= count($activeRules) ?>件</span>
+    <?php if ($sheetUrl = $data->spreadsheetUrl()): ?><a class="btn sheets" href="<?= V::e($sheetUrl) ?>" target="_blank" rel="noopener"><?= V::icon('sheet', 17) ?>スプレッドシートを開く<?= V::icon('external', 14) ?></a><?php endif; ?>
   </div>
 </div>
 

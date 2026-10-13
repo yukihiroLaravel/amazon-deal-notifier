@@ -22,7 +22,7 @@ $fetchedAt = $all[0]->fetchedAt ?? null;
   </div>
   <div class="head-meta">
     <span class="chip"><?= V::icon('clock', 14) ?>取得 <?= V::dt($fetchedAt) ?></span>
-    <?php if ($url = $data->spreadsheetUrl()): ?><a class="btn" href="<?= V::e($url) ?>" target="_blank" rel="noopener"><?= V::icon('sheet', 15) ?>スプレッドシートで開く</a><?php endif; ?>
+    <?php if ($url = $data->spreadsheetUrl()): ?><a class="btn sheets" href="<?= V::e($url) ?>" target="_blank" rel="noopener"><?= V::icon('sheet', 17) ?>スプレッドシートを開く<?= V::icon('external', 14) ?></a><?php endif; ?>
   </div>
 </div>
 

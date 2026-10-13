@@ -49,6 +49,14 @@ $lastRun = $data->lastRun();
       <?php endforeach; ?>
     </nav>
 
+    <?php if ($sheetUrl): ?>
+      <a class="sheet-link" href="<?= V::e($sheetUrl) ?>" target="_blank" rel="noopener">
+        <span class="sheet-link-icon"><?= V::icon('sheet', 18) ?></span>
+        <span><strong>スプレッドシートを開く</strong><small>条件の変更・結果の確認</small></span>
+        <?= V::icon('external', 15) ?>
+      </a>
+    <?php endif; ?>
+
     <div class="sidebar-foot">
       <div class="env-row"><span>データ取得</span><span><span class="dot <?= $data->isDemo() ? 'demo' : 'on' ?>"></span><?= $data->isDemo() ? 'PA-API（デモ）' : 'PA-API 5.0' ?></span></div>
       <div class="env-row"><span>保存先</span><span><?= $sheetUrl ? 'スプレッドシート' : 'ローカル JSON' ?></span></div>

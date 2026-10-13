@@ -15,7 +15,7 @@ $sheetUrl = $data->spreadsheetUrl();
     <p>対象カテゴリー・割引率の条件・実行間隔は、<?= $sheetUrl ? 'Google スプレッドシート' : 'スプレッドシート（ローカル実行時は storage/data/*.json）' ?>で変更します。次回の実行から反映されます。</p>
   </div>
   <?php if ($sheetUrl): ?>
-    <a class="btn primary" href="<?= V::e($sheetUrl) ?>" target="_blank" rel="noopener"><?= V::icon('sheet', 15) ?>スプレッドシートで編集</a>
+    <a class="btn sheets" href="<?= V::e($sheetUrl) ?>" target="_blank" rel="noopener"><?= V::icon('sheet', 17) ?>スプレッドシートで編集する<?= V::icon('external', 14) ?></a>
   <?php endif; ?>
 </div>
 
