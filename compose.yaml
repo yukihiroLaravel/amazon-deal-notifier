@@ -1,0 +1,21 @@
+services:
+  # CLI（ジョブ実行・テスト・composer）
+  app:
+    build: ./docker
+    volumes:
+      - .:/app
+    env_file:
+      - path: .env
+        required: false
+
+  # 閲覧用ダッシュボード http://localhost:8080
+  web:
+    build: ./docker
+    command: php -S 0.0.0.0:8080 -t public
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    env_file:
+      - path: .env
+        required: false

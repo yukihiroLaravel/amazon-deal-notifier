@@ -1,0 +1,11 @@
+/vendor/
+.env
+.phpunit.cache/
+/storage/data/*
+/storage/logs/*
+/storage/slack/*
+!/storage/**/.gitkeep
+/credentials/
+*.json.key
+service-account*.json
+.DS_Store
