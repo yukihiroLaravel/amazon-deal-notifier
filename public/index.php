@@ -44,8 +44,12 @@ if (!isset($pages[$page])) {
 session_start();
 $_SESSION['csrf'] ??= bin2hex(random_bytes(16));
 
-// 「今すぐ取得」ボタン。最短間隔（基本設定）と実行中ロックで、連打しても実行は1回に抑えられる
+// 「今すぐ取得」ボタン（.env の MANUAL_FETCH=on のときだけ表示・受付）。最短間隔（基本設定）と実行中ロックで、連打しても実行は1回に抑えられる
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'run') {
+    if (App::env('MANUAL_FETCH') !== 'on') {
+        http_response_code(404);
+        exit('「今すぐ取得」は無効になっています（.env の MANUAL_FETCH=on で有効）');
+    }
     if (!hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? ''))) {
         http_response_code(403);
         exit('画面を再読み込みしてから、もう一度お試しください');

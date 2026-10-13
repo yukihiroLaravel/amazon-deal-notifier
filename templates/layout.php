@@ -57,7 +57,9 @@ $lastRun = $data->lastRun();
       </a>
     <?php endif; ?>
 
-    <?php require __DIR__ . '/_run-button.php'; ?>
+    <?php if (DealRadar\Support\App::env('MANUAL_FETCH') === 'on'): ?>
+      <?php require __DIR__ . '/_run-button.php'; ?>
+    <?php endif; ?>
 
     <div class="sidebar-foot">
       <div class="env-row"><span>データ取得</span><span><span class="dot <?= $data->isDemo() ? 'demo' : 'on' ?>"></span><?= $data->isDemo() ? 'PA-API（デモ）' : 'PA-API 5.0' ?></span></div>
