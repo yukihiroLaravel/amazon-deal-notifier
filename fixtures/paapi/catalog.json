@@ -1,0 +1,403 @@
+{
+  "_comment": "デモ用の架空商品カタログ。MockPaapiServer がこれを元に PA-API 5.0 形式のレスポンスを生成する。ASIN・ブランドはすべて架空。",
+  "items": [
+    {
+      "asin": "B0DEMOE001",
+      "searchIndex": "Electronics",
+      "title": "ワイヤレスノイズキャンセリングヘッドホン WH-40 ブラック",
+      "brand": "KAZE Audio",
+      "listPrice": 32800,
+      "discountBand": [
+        15,
+        48
+      ]
+    },
+    {
+      "asin": "B0DEMOE002",
+      "searchIndex": "Electronics",
+      "title": "完全ワイヤレスイヤホン Pods Lite 第2世代 マルチポイント対応",
+      "brand": "KAZE Audio",
+      "listPrice": 12800,
+      "discountBand": [
+        20,
+        55
+      ]
+    },
+    {
+      "asin": "B0DEMOE003",
+      "searchIndex": "Electronics",
+      "title": "骨伝導イヤホン OpenRun 防水IP67",
+      "brand": "Velo",
+      "listPrice": 15980,
+      "discountBand": [
+        10,
+        40
+      ]
+    },
+    {
+      "asin": "B0DEMOE004",
+      "searchIndex": "Electronics",
+      "title": "Bluetoothスピーカー Wave Mini 防水 20時間再生",
+      "brand": "Aurex",
+      "listPrice": 8980,
+      "discountBand": [
+        25,
+        60
+      ]
+    },
+    {
+      "asin": "B0DEMOE005",
+      "searchIndex": "Electronics",
+      "title": "サウンドバー Cinema 2.1ch Dolby Atmos対応",
+      "brand": "Aurex",
+      "listPrice": 39800,
+      "discountBand": [
+        10,
+        45
+      ]
+    },
+    {
+      "asin": "B0DEMOE006",
+      "searchIndex": "Electronics",
+      "title": "4K液晶テレビ 43型 Googleテレビ搭載",
+      "brand": "Novalis",
+      "listPrice": 64800,
+      "discountBand": [
+        5,
+        35
+      ]
+    },
+    {
+      "asin": "B0DEMOE007",
+      "searchIndex": "Electronics",
+      "title": "アクションカメラ Orbit 5 4K60fps 手ブレ補正",
+      "brand": "Orbit Labs",
+      "listPrice": 42800,
+      "discountBand": [
+        15,
+        50
+      ]
+    },
+    {
+      "asin": "B0DEMOE008",
+      "searchIndex": "Electronics",
+      "title": "ポータブル電源 1000Wh 純正弦波 キャンプ・防災",
+      "brand": "Sora Tech",
+      "listPrice": 109800,
+      "discountBand": [
+        20,
+        58
+      ]
+    },
+    {
+      "asin": "B0DEMOE009",
+      "searchIndex": "Electronics",
+      "title": "スマートウォッチ Pulse 3 心拍・睡眠計測 GPS内蔵",
+      "brand": "Velo",
+      "listPrice": 19800,
+      "discountBand": [
+        10,
+        52
+      ]
+    },
+    {
+      "asin": "B0DEMOE010",
+      "searchIndex": "Electronics",
+      "title": "モバイルバッテリー 20000mAh PD65W 急速充電",
+      "brand": "Quanta Gear",
+      "listPrice": 5980,
+      "discountBand": [
+        15,
+        50
+      ]
+    },
+    {
+      "asin": "B0DEMOE011",
+      "searchIndex": "Electronics",
+      "title": "ワイヤレス充電スタンド 3in1 15W",
+      "brand": "Quanta Gear",
+      "listPrice": 4980,
+      "discountBand": [
+        20,
+        62
+      ]
+    },
+    {
+      "asin": "B0DEMOE012",
+      "searchIndex": "Electronics",
+      "title": "ドライブレコーダー 前後2カメラ 2K WiFi対応",
+      "brand": "Orbit Labs",
+      "listPrice": 18800,
+      "discountBand": [
+        10,
+        45
+      ],
+      "noBasis": true
+    },
+    {
+      "asin": "B0DEMOC001",
+      "searchIndex": "Computers",
+      "title": "ゲーミングマウス 軽量58g 26000DPI ワイヤレス",
+      "brand": "Tessera",
+      "listPrice": 11800,
+      "discountBand": [
+        15,
+        50
+      ]
+    },
+    {
+      "asin": "B0DEMOC002",
+      "searchIndex": "Computers",
+      "title": "メカニカルキーボード 75% ホットスワップ 赤軸 JIS配列",
+      "brand": "Tessera",
+      "listPrice": 16980,
+      "discountBand": [
+        10,
+        40
+      ]
+    },
+    {
+      "asin": "B0DEMOC003",
+      "searchIndex": "Computers",
+      "title": "27インチ 4Kモニター IPS USB-C 90W給電",
+      "brand": "Novalis",
+      "listPrice": 54800,
+      "discountBand": [
+        10,
+        42
+      ]
+    },
+    {
+      "asin": "B0DEMOC004",
+      "searchIndex": "Computers",
+      "title": "USB-C ハブ 8in1 HDMI 4K60Hz PD100W",
+      "brand": "Quanta Gear",
+      "listPrice": 6980,
+      "discountBand": [
+        20,
+        60
+      ]
+    },
+    {
+      "asin": "B0DEMOC005",
+      "searchIndex": "Computers",
+      "title": "ポータブルSSD 1TB 最大1050MB/s USB3.2 Gen2",
+      "brand": "Sora Tech",
+      "listPrice": 14800,
+      "discountBand": [
+        15,
+        55
+      ]
+    },
+    {
+      "asin": "B0DEMOC006",
+      "searchIndex": "Computers",
+      "title": "Webカメラ 1080p 60fps オートフォーカス マイク内蔵",
+      "brand": "Orbit Labs",
+      "listPrice": 7980,
+      "discountBand": [
+        20,
+        50
+      ]
+    },
+    {
+      "asin": "B0DEMOC007",
+      "searchIndex": "Computers",
+      "title": "ノートPCスタンド アルミ 高さ・角度調整",
+      "brand": "Hikari Home",
+      "listPrice": 3980,
+      "discountBand": [
+        10,
+        48
+      ]
+    },
+    {
+      "asin": "B0DEMOC008",
+      "searchIndex": "Computers",
+      "title": "Wi-Fi 6E ルーター トライバンド 4804Mbps",
+      "brand": "Sora Tech",
+      "listPrice": 23800,
+      "discountBand": [
+        10,
+        38
+      ]
+    },
+    {
+      "asin": "B0DEMOC009",
+      "searchIndex": "Computers",
+      "title": "microSDXC 256GB UHS-I U3 V30 A2",
+      "brand": "Quanta Gear",
+      "listPrice": 4580,
+      "discountBand": [
+        25,
+        65
+      ]
+    },
+    {
+      "asin": "B0DEMOC010",
+      "searchIndex": "Computers",
+      "title": "ドッキングステーション 13in1 デュアルモニター対応",
+      "brand": "Tessera",
+      "listPrice": 21800,
+      "discountBand": [
+        10,
+        45
+      ]
+    },
+    {
+      "asin": "B0DEMOC011",
+      "searchIndex": "Computers",
+      "title": "モバイルモニター 15.6インチ フルHD タッチ対応",
+      "brand": "Novalis",
+      "listPrice": 26800,
+      "discountBand": [
+        15,
+        52
+      ]
+    },
+    {
+      "asin": "B0DEMOC012",
+      "searchIndex": "Computers",
+      "title": "外付けHDD 4TB USB3.2 テレビ録画対応",
+      "brand": "Sora Tech",
+      "listPrice": 15800,
+      "discountBand": [
+        5,
+        30
+      ],
+      "outOfStock": true
+    },
+    {
+      "asin": "B0DEMOH001",
+      "searchIndex": "HomeAndKitchen",
+      "title": "電気ケトル 1.0L 温度調節 保温機能付き",
+      "brand": "Mori Kitchen",
+      "listPrice": 8980,
+      "discountBand": [
+        15,
+        45
+      ]
+    },
+    {
+      "asin": "B0DEMOH002",
+      "searchIndex": "HomeAndKitchen",
+      "title": "全自動コーヒーメーカー ミル付き 5杯",
+      "brand": "Mori Kitchen",
+      "listPrice": 19800,
+      "discountBand": [
+        10,
+        48
+      ]
+    },
+    {
+      "asin": "B0DEMOH003",
+      "searchIndex": "HomeAndKitchen",
+      "title": "ノンフライヤー 4.5L 油を使わず揚げ物",
+      "brand": "Hikari Home",
+      "listPrice": 14800,
+      "discountBand": [
+        20,
+        58
+      ]
+    },
+    {
+      "asin": "B0DEMOH004",
+      "searchIndex": "HomeAndKitchen",
+      "title": "IH炊飯器 5.5合 圧力炊き 内釜3年保証",
+      "brand": "Mori Kitchen",
+      "listPrice": 29800,
+      "discountBand": [
+        10,
+        40
+      ]
+    },
+    {
+      "asin": "B0DEMOH005",
+      "searchIndex": "HomeAndKitchen",
+      "title": "低温調理器 1000W 防水 アプリ連携",
+      "brand": "Hikari Home",
+      "listPrice": 12800,
+      "discountBand": [
+        20,
+        55
+      ]
+    },
+    {
+      "asin": "B0DEMOH006",
+      "searchIndex": "HomeAndKitchen",
+      "title": "真空断熱タンブラー 600ml 2個セット",
+      "brand": "Velo",
+      "listPrice": 3480,
+      "discountBand": [
+        10,
+        50
+      ]
+    },
+    {
+      "asin": "B0DEMOH007",
+      "searchIndex": "HomeAndKitchen",
+      "title": "ステンレス包丁 3本セット 日本製 鋼",
+      "brand": "Mori Kitchen",
+      "listPrice": 9800,
+      "discountBand": [
+        5,
+        35
+      ]
+    },
+    {
+      "asin": "B0DEMOH008",
+      "searchIndex": "HomeAndKitchen",
+      "title": "IH対応 フライパン 5点セット 取っ手が取れる",
+      "brand": "Hikari Home",
+      "listPrice": 11800,
+      "discountBand": [
+        20,
+        60
+      ]
+    },
+    {
+      "asin": "B0DEMOH009",
+      "searchIndex": "HomeAndKitchen",
+      "title": "電動コーヒーミル 臼式 40段階 粒度調節",
+      "brand": "Aurex",
+      "listPrice": 7480,
+      "discountBand": [
+        15,
+        50
+      ]
+    },
+    {
+      "asin": "B0DEMOH010",
+      "searchIndex": "HomeAndKitchen",
+      "title": "ホットサンドメーカー 耳まで焼ける ダブル",
+      "brand": "Velo",
+      "listPrice": 4280,
+      "discountBand": [
+        10,
+        45
+      ]
+    },
+    {
+      "asin": "B0DEMOH011",
+      "searchIndex": "HomeAndKitchen",
+      "title": "コードレス ハンディ掃除機 サイクロン 2in1",
+      "brand": "Hikari Home",
+      "listPrice": 17800,
+      "discountBand": [
+        15,
+        52
+      ]
+    },
+    {
+      "asin": "B0DEMOH012",
+      "searchIndex": "HomeAndKitchen",
+      "title": "食器乾燥機 ステンレス 6人分",
+      "brand": "Mori Kitchen",
+      "listPrice": 13800,
+      "discountBand": [
+        5,
+        25
+      ]
+    }
+  ]
+}
