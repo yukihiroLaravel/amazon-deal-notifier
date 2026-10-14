@@ -21,6 +21,9 @@ use Throwable;
 /** ダッシュボード表示用のデータ取得（閲覧専用。設定の変更はスプレッドシートで行う） */
 final class DashboardData
 {
+    /** 定期実行の起動時刻（毎時何分か）。.github/workflows/run.yml の cron と合わせる */
+    public const SCHEDULE_MINUTE = 17;
+
     private ?string $storageError = null;
 
     /** @var array<string, mixed> */
@@ -106,10 +109,10 @@ final class DashboardData
     {
         foreach ($this->runLogs() as $log) {
             if ($log->countsAsRun()) {
-                // 定期実行は毎時0分に起動し、前回の実行から実行間隔ぶん後の時間帯で処理する
+                // 定期実行は毎時17分に起動し、前回の実行から実行間隔ぶん後の時間帯で処理する
                 $slot = JobRunner::hourSlot($log->startedAt) + $this->settings()->intervalHours;
 
-                return (new DateTimeImmutable('@' . ($slot * 3600)))->setTimezone($log->startedAt->getTimezone());
+                return (new DateTimeImmutable('@' . ($slot * 3600 + self::SCHEDULE_MINUTE * 60)))->setTimezone($log->startedAt->getTimezone());
             }
         }
 

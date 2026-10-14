@@ -77,10 +77,10 @@ $sheetUrl = $data->spreadsheetUrl();
       </div>
       <div class="card-body stack">
         <div>
-          <div class="code-label">.github/workflows/run.yml<span>毎時0分に起動</span></div>
+          <div class="code-label">.github/workflows/run.yml<span>毎時17分に起動</span></div>
           <pre class="code">on:
   schedule:
-    - cron: <span class="hl">'0 * * * *'</span>   <span class="k"># 毎時（UTC）</span>
+    - cron: <span class="hl">'17 * * * *'</span>  <span class="k"># 毎時17分（混み合う0分を避ける）</span>
   workflow_dispatch:          <span class="k"># 手動実行ボタン</span></pre>
         </div>
         <p class="muted" style="margin: 0; font-size: 13px">起動は毎時ですが、実際に処理するのは「実行間隔（時間）」が経過したときだけです。間隔の変更はスプレッドシートだけで完結し、コードの変更は不要です。レンタルサーバーの cron でも同じコマンドで動きます。</p>

@@ -23,7 +23,7 @@ Amazon の指定カテゴリーから商品情報を定期的に取得し、**�
 | 指定カテゴリーから商品情報を取得 | PA-API 5.0 `SearchItems` を SearchIndex＋BrowseNodeId（カテゴリーID）で呼び出し、ページ送りで取得 |
 | 商品名・URL・価格・参考価格・割引率を収集 | `ItemInfo.Title` / `DetailPageURL` / `Offers.Listings.Price` / `Offers.Listings.SavingBasis` を取得 |
 | 利用規約・API 利用条件に沿った取得 | 公式 API のみ使用。1秒1リクエストの制限を守り、`TooManyRequests` は指数バックオフで再試行 |
-| 定期的に更新 | GitHub Actions で毎時起動。実際の実行間隔はスプレッドシートで設定 |
+| 定期的に更新 | GitHub Actions で毎時17分に起動（混み合う0分を避ける）。実際の実行間隔はスプレッドシートで設定 |
 | 割引率の計算 | `(参考価格 − 販売価格) ÷ 参考価格`。小数第1位で切り捨て。参考価格がなければ割引額から逆算 |
 | 条件で抽出・並べ替え | ルールごとに最低割引率・価格帯で絞り込み、**割引率の高い順**（同率なら割引額の大きい順） |
 | 一覧で確認 | スプレッドシート「抽出結果」シート／ダッシュボード |
@@ -38,7 +38,7 @@ Amazon の指定カテゴリーから商品情報を定期的に取得し、**�
 
 ```mermaid
 flowchart LR
-    A[GitHub Actions<br>毎時起動] --> B{実行間隔を<br>満たしている?}
+    A[GitHub Actions<br>毎時17分に起動] --> B{実行間隔を<br>満たしている?}
     B -- いいえ --> X[スキップ]
     B -- はい --> C[抽出ルールを読む<br>スプレッドシート]
     C --> D[PA-API SearchItems<br>SigV4 署名]
@@ -144,7 +144,7 @@ PAAPI_PARTNER_TAG=xxxxx-22
 
 ### 4. GitHub Actions
 
-リポジトリの Settings → Secrets に `SPREADSHEET_ID` / `GOOGLE_SERVICE_ACCOUNT_JSON`（鍵 JSON の中身）/ `SLACK_WEBHOOK_URL` / `PAAPI_*` を登録し、Variables に `DATA_SOURCE=paapi` を設定します。`.github/workflows/run.yml` が毎時起動し、Actions 画面の「Run workflow」から手動実行もできます。
+リポジトリの Settings → Secrets に `SPREADSHEET_ID` / `GOOGLE_SERVICE_ACCOUNT_JSON`（鍵 JSON の中身）/ `SLACK_WEBHOOK_URL` / `PAAPI_*` を登録し、Variables に `DATA_SOURCE=paapi` を設定します。`.github/workflows/run.yml` が毎時17分に起動し、Actions 画面の「Run workflow」から手動実行もできます。
 
 ## 運用費
 
